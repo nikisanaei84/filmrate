@@ -1,0 +1,29 @@
+{% extends "_base.html" %}
+
+{% block title %}login{% endblock title %}
+
+{% block content %}
+<h2 class="mb-4" >login</h2>
+
+<form method="post" class="card p-4">
+    {% csrf_token %}
+
+    <div class="mb-3" >
+        <label>username</label>
+        <input type="text" name="username" class="form-control">
+    </div>  
+    <div class="mb-3" >
+        <label >password</label>
+        <input type="password" name="password" class="form-control" >
+    </div>
+
+    {% comment %} {{ form.as_p }} {% endcomment %}
+    <button type="submit" class="btn btn-primary">login</button>
+</form>
+{% endblock %}
+
+
+
+
+
+

@@ -1,0 +1,13 @@
+{% extends "_base.html" %}
+
+{% block title %}signup{% endblock %}
+
+{% block content %}
+<h2 class="mb-4" >signup</h2>
+
+<form method="post" class="card p-4" style="background-color: #2d2d2d; color: white; padding: 20px; border-radius: 8px;">
+    {% csrf_token %}
+    {{ form.as_p }}   
+    <button type="submit" style="background-color: #007bff; color: white;">submit</button>
+</form>
+{% endblock %}

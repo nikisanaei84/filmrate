@@ -1,0 +1,57 @@
+{% extends '_base.html' %}
+{% block title %}{{ genre }} Movies{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ genre_name }} Movies</h1>
+    <a href="{% url 'movie_list' %}" class="btn btn-secondary mb-3">All Movies</a>
+
+    <div class="row">
+        {% for movie in movies %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                {% if movie.poster %}
+                <a href="{% url 'detail' movie.id %}">
+                    <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.title }}" style="height: 300px; object-fit: cover;">
+                </a>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ movie.title }}</h5>
+                    <p class="card-text">genre: {{ movie.genre }}</p>
+                    <p class="card-text">year: {{ movie.release_year }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-warning">
+                no movie in {{genre.name}} found.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- پیجینیشن -->
+    {% if is_paginated %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+            </li>
+            {% endif %}
+            
+            <li class="page-item disabled">
+                <span class="page-link">page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

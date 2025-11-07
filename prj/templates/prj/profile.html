@@ -1,0 +1,46 @@
+{% extends '_base.html' %}
+{% block title %}my profile{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>profile: {{ username }}</h1>
+    {% comment %} <p>ایمیل: {{ user_profile.email }}</p> {% endcomment %}
+    
+    <h3>your favorites:</h3>
+        <div class="row">
+            {% for favorite in favorites %}
+                <div class="col-md-4 mb-3">
+                    {% comment %} <div class="card"> {% endcomment %}
+                        <div class="card-body">
+                            {% if favorite.movie.poster %}
+                            <a href="{% url "detail" favorite.movie.id %}">
+                                <img src="{{ favorite.movie.poster.url}}" class="card-img-top" alt="{{ movie.title }}"
+                                style="object-fit:cover; height:300px; width:100%">
+                            </a>
+                            {% endif %}
+                         
+          <div class="card-body">
+            <h5 class="card-title">
+            <a href="{% url "detail" favorite.movie.id %}"> {{ favorite.movie.title }}</a></h5> 
+            <p class="card-text">Genre: {{ favorite.movie.genre }} | Year: {{ favorite.movie.release_year }}</p>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No movies found.</p>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+

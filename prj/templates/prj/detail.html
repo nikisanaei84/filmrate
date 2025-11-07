@@ -1,0 +1,136 @@
+{% extends '_base.html' %}
+{% block title %}
+   detail page
+{% endblock title %}
+{% block content %}
+  <div class="row">
+    <div class="col-md-4">
+      {% if movie.poster %}
+        <img src="{{ movie.poster.url }}" class="img-fluid rounded shadow" alt="{{ movie.title }}" style="max-height: 400px; object-fit: cover;">
+      {% else %}
+        <div class="bg-secondary rounded" style="height: 400px;"></div>
+      {% endif %}
+    </div>
+    <div class="col-md-8">
+      <h1 class="mb-3">{{ movie.title }}</h1>
+      <p class="lead">Genre: {{ movie.genre }} | Year: {{ movie.release_year }}</p>
+      <p class="lead">Average Rating : {{ average_rating|floatformat:1 }} / 5</p>
+      <p class="text">{{ movie.description }}</p>
+      <div>
+          <p class="card-text"><a href="{% url "movie_list" %}"  class="btn btn-primary btn-lg mt-3">Back to Home</a></p>
+      </div>
+
+
+      {% if user.is_authenticated %}
+          <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" name="favorite_submit" class="favorite-btn" data-is-favorite="{{ is_favorite }}">
+              <span class="heart-icon" style="font-size:20px;">
+              {% if is_favorite %}
+                <span style="color:red;">❤️</span>
+              {% else %}
+                <span style="color:grey;">♡</span>
+              {% endif %}
+            </span>
+            </button>
+          </form>
+        {% endif %}
+      </p>
+      
+
+
+
+
+
+
+
+
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <h2>Reviews</h2>
+      {% for review in reviews %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5>{{ review.user.username }} - {{ review.rating }} /5</h5>
+            <p>{{ review.text }}</p>
+            <small>{{ review.created_at }}</small>
+
+            <h6>Comments</h6>
+            {% for comment in review.review_comments.all %}
+              <p>{{ comment.user.username }}: {{ comment.text }}</p>
+              <small>{{ comment.created_at }}</small>
+            {% endfor %}
+
+            {% if user.is_authenticated %}
+              <form method="post" action="">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <input type="hidden" name="review_pk" value="{{ review.pk }}">
+                <button type="submit" name="comment_submit" class="btn btn-secondary btn-sm">Add Comment</button>
+              </form>
+            {% else %}
+              <p>Please <a href="{% url 'login' %}">log in</a> to add a comment.</p>
+            {% endif %}
+          </div>
+        </div>
+      {% empty %}
+        <p>No reviews yet.</p>
+      {% endfor %}
+
+      {% if user.is_authenticated %}
+        <h2>Add Review</h2>
+        <form method="post" action="">
+          {% csrf_token %}
+          {{ review_form.as_p }}
+          <button type="submit" name="review_submit" class="btn btn-primary">Submit Review</button>
+        </form>
+      {% else %}
+        <p>Please <a href="{% url 'login' %}">log in</a> to add a review.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+
+
+{% block extra_js %}
+<script>
+  document.querySelectorAll('.favorite-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // درست شده
+      const isFavorite = this.getAttribute('data-is-favorite') === 'true';
+      
+      // فقط رنگ رو عوض کن، innerHTML نریز
+      if (isFavorite) {
+        this.style.color = 'grey';
+        this.textContent = '♡';
+      } else {
+        this.style.color = 'red';
+        this.textContent = '❤️';
+      }
+      
+      // فرم رو ارسال کن
+      this.form.submit();
+    });
+  });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+      
+
+            

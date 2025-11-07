@@ -1,0 +1,290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineRate - Movie Review Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --card-bg: #ffffff;
+            --navbar-bg: #343a40;
+            --footer-bg: #343a40;
+            --border-color: #dee2e6;
+        }
+
+        .dark-mode {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --card-bg: #1e1e1e;
+            --navbar-bg: #000000;
+            --footer-bg: #000000;
+            --border-color: #444444;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar {
+            background-color: var(--navbar-bg) !important;
+        }
+        
+        .main-container {
+            min-height: calc(100vh - 160px);
+            padding: 20px 0;
+        }
+        
+        .category-sidebar, .movie-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .category-sidebar h5 {
+            color: var(--text-color);
+            border-bottom: 2px solid #dc3545;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .category-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .category-list li {
+            margin-bottom: 8px;
+        }
+        
+        .category-list a {
+            text-decoration: none;
+            color: var(--text-color);
+            transition: color 0.3s;
+        }
+        
+        .category-list a:hover {
+            color: #dc3545;
+        }
+        
+        .footer {
+            background: var(--footer-bg);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+        
+        .movie-card {
+            transition: transform 0.3s;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .search-box {
+            max-width: 300px;
+        }
+
+        .theme-switcher {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'movie_list' %}">
+                <i class="bi bi-camera-reels"></i> CineRate
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Search Box -->
+                <form class="d-flex search-box mx-3" method="GET" action="{% url "movie_list" %}">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Search movies..." aria-label="Search" value="{{ request.GET.q}}">
+                    <button class="btn btn-outline-light" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+                
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'movie_list' %}">
+                            <i class="bi bi-film"></i> All Movies
+</a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <!-- Theme Switcher -->
+                    <li class="nav-item">
+                        <div class="nav-link theme-switcher" onclick="toggleTheme()">
+                            <i class="bi bi-palette"></i> 
+                            <span id="theme-text">Dark Mode</span>
+                        </div>
+                    </li>
+
+                    {% if user.is_authenticated %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'profile' %}">
+            <i class="bi bi-person"></i> My Profile
+        </a>
+    </li>
+    <li class="nav-item">
+        <span class="nav-link ">
+            <i class="bi bi-person-circle"></i> {{ user.username }}
+        </span>
+    </li>
+    <li class="nav-item d-flex align-items-center">
+        <form method="post" action="{% url 'logout' %}" class="d-inline m-0">
+            {% csrf_token %}
+            <button type="submit" class="nav-link btn btn-link  border-0 p-0" 
+            style="cursor: pointer;">
+                <i class="bi bi-box-arrow-right" ></i> Logout
+            </button>
+        </form>
+    </li>
+{% else %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'login' %}">
+            <i class="bi bi-box-arrow-in-right"></i> Login
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'signup' %}">
+            <i class="bi bi-person-plus"></i> Sign Up
+        </a>
+    </li>
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+                    
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container main-container">
+        <div class="row">
+            <!-- Categories Sidebar -->
+            <div class="col-lg-3">
+                <div class="category-sidebar">
+                    <h5><i class="bi bi-tags"></i> Movie Genres</h5>
+                    <ul class="category-list">
+          
+                        <li><a href="{% url "genre" 'Drama' %}"><i class="bi bi-caret-right"></i> Drama</a></li>
+                        <li><a href="{% url "genre" 'Action' %}"><i class="bi bi-caret-right"></i> Comedy</a></li>
+                        <li><a href="{% url "genre" 'Horror' %}"><i class="bi bi-caret-right"></i> Horror</a></li>
+                        <li><a href="{% url "genre" 'Romance' %}"><i class="bi bi-caret-right"></i> Romance</a></li>
+                        <li><a href="{% url "genre" 'Sci_Fi' %}"><i class="bi bi-caret-right"></i> Sci-Fi</a></li>
+                        <li><a href="{% url "genre" 'Thriller' %}"><i class="bi bi-caret-right"></i> Thriller</a></li>
+                        <li><a href="{% url "genre" 'Documentary' %}"><i class="bi bi-caret-right"></i> Documentary</a></li>
+                        <li><a href="{% url "genre" 'Crime' %}"><i class="bi bi-caret-right"></i> Crime</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <div class="col-lg-9">
+                {% block content %}
+                <!-- Content will be injected here -->
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>CineRate</h5>
+                    <p>Your ultimate movie review and rating platform. Discover, rate, and discuss your favorite films.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">About Us</a></li>
+                        <li><a href="#" class="text-light">Contact</a></li>
+                        <li><a href="#" class="text-light">Privacy Policy</a></li>
+                        <li><a href="#" class="text-light">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Connect With Us</h5>
+                    <div class="social-links">
+
+
+<a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-light me-3"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-light me-3"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="bi bi-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p>&copy; 2024 CineRate. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const themeText = document.getElementById('theme-text');
+            if (document.body.classList.contains('dark-mode')) {
+                themeText.textContent = 'Light Mode';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeText.textContent = 'Dark Mode';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-text').textContent = 'Light Mode';
+            }
+        });
+    </script>
+</body>
+</html>
